@@ -1,2 +1,2 @@
 #!/bin/bash
-nosetests web_utils/tests.py --with-coverage --coverage-package=web_utils
+nosetests web_utils/tests.py --with-coverage --cover-package=web_utils

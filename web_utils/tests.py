@@ -7,7 +7,7 @@ from sqlalchemy import (Column, Text, Integer, DateTime)
 from sqlalchemy.dialects.postgresql import (ARRAY, JSON)
 from sqlalchemy.ext.declarative import declarative_base
 from .validate import datetime2utmp, safe_int_arg
-from .sqlalchemy import DBFC
+from ._sqlalchemy import DBFC
 
 __author__ = 'winkidney'
 
@@ -50,7 +50,7 @@ class TestDBFC(unittest.TestCase):
         self.assertEqual(list(dbfc.as_list()), [('name', 'hehe')])
 
     def test_specified_registry(self):
-        from .sqlalchemy import DBFC
+        from _sqlalchemy import DBFC
         test_obj = TestObj(
             name='hehe',
         )
@@ -62,7 +62,7 @@ class TestDBFC(unittest.TestCase):
         self.assertEqual(dbfc.as_dict(), {'name': 'e'})
 
     def test_unkonw_field(self):
-        from .sqlalchemy import DBFC
+        from _sqlalchemy import DBFC
         DBFC.unregister(ARRAY)
         test_obj = TestObj(
             slist=['fuck', 'you', 'ass'],
