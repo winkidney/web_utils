@@ -55,6 +55,8 @@ class DBFCMixin(object):
     def to_dict(cls, model_instance, pure=False):
         if not cls._default_output:
             raise NotImplementedError("cls._default_output can not be None.")
+        if model_instance is None:
+            return None
         return DBFC(model_instance, cls._default_output).as_dict(pure)
 
     def as_dict(self, pure=False):
