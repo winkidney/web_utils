@@ -25,3 +25,22 @@ def get_route_from_registry(registry=None):
         if not route_name.startswith('__'):
             route_names.append(route_name)
     return route_names
+
+
+class BaseHandler(object):
+
+    def __init__(self, request):
+        self.request = request
+
+
+class ListBaseHandler(BaseHandler):
+
+    def __init__(self, request):
+        """
+        :type request: pyramid.request.Request
+        """
+        super(ListBaseHandler, self).__init__(request)
+        self.page = _safe_get_int_arg(self.request.GET.get('page'), 1)
+        self.limit = _safe_get_int_arg(self.request.GET.get("limit"), 30, nmin=1, nmax=50)
+        self.start = (self.page-1)*self.limit
+        self.end = self.page*self.limit

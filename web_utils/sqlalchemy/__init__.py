@@ -46,15 +46,19 @@ def form2model(form, model_instance, exclude=None):
             setattr(model_instance, field, getattr(form, field).data)
 
 
-class AlchemyJsonMixin(object):
-    """inherit this class for json-like output"""
+class DBFCMixin(object):
+    """Mixin object for sqlalchemy orm, just inherit and call model_instance.as_dict or cls.to_dict"""
 
-    def as_dict(self, model_instance):
-        """
-        Get {key:value} dict from a SQLAlchemy model instance.
-        :rtype dict
-        """
-        return dict((col, getattr(model_instance, col)) for col in model_instance.__table__.columns.keys())
+    _default_output = None
+
+    @classmethod
+    def to_dict(cls, model_instance, pure=False):
+        if not cls._default_output:
+            raise NotImplementedError("cls._default_output can not be None.")
+        return DBFC(model_instance, cls._default_output).as_dict(pure)
+
+    def as_dict(self, pure=False):
+        return self.to_dict(self, pure)
 
 
 class DBFieldConverter(object):
@@ -64,7 +68,7 @@ class DBFieldConverter(object):
     __slots__ = ('_registry', 'dict', 'model', 'registry', '_allows')
     _registry = {}
 
-    def __init__(self, model_instance, allow_output=None, registry=None, extra_out=None):
+    def __init__(self, model_instance, allow_output=tuple(), registry={}, extra_out=tuple()):
         """
         If registry is given, same method in this registry will overwrite that in class _registry.
         :param model_instance:
@@ -72,6 +76,7 @@ class DBFieldConverter(object):
         :type allow_output: list or tuple
         :param registry: dict like {column_type: convert_function}
         :type registry: dict
+        :param extra_out: extra output field(class property, not a database table field)
         :type extra_out: list or tuple
         """
 
@@ -81,6 +86,9 @@ class DBFieldConverter(object):
             raise TypeError("allowed outputs [{allow_output}] must be list or tuple")
         if not isinstance(registry, dict):
             raise TypeError('argument registry `{registry}` must be a dict.'.format(registry=registry))
+        if not isinstance(extra_out, (list, tuple)):
+            raise TypeError('argument extra_out `{0}` must be a dict.'.format(extra_out))
+
         self.registry = registry
 
         self.model = model_instance
