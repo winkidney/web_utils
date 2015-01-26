@@ -22,12 +22,14 @@ __all__ = (
 class StorageBackendMixin(object):
         __metaclass__ = ABCMeta
 
+        @classmethod
         @abstractmethod
-        def get(self, key, *args, **kwargs):
+        def sget(cls, key, **kwargs):
             pass
 
+        @classmethod
         @abstractmethod
-        def set(self, key, value, *args, **kwargs):
+        def sset(cls, key, value, **kwargs):
             pass
 
 
@@ -39,27 +41,30 @@ class DummyStorageBackend(StorageBackendMixin):
     _storage = {}
 
     @classmethod
-    def get(cls, key):
+    def sget(cls, key, **kwargs):
         return cls._storage.get(key)
 
     @classmethod
-    def set(cls, key, value, *args, **kwargs):
+    def sset(cls, key, value, **kwargs):
         cls._storage[key] = value
 
 
 class CacheBackendMixin(object):
     __metaclass__ = ABCMeta
 
+    @classmethod
     @abstractmethod
-    def get(self, key):
+    def cget(cls, key, **kwargs):
         pass
 
+    @classmethod
     @abstractmethod
-    def set(self, key, value):
+    def cset(cls, key, value, **kwargs):
         pass
 
+    @classmethod
     @abstractmethod
-    def delete(self, key):
+    def cdelete(cls, key):
         pass
 
 
@@ -69,15 +74,15 @@ class DummyCacheBackend(CacheBackendMixin):
     """
     _cached = {}
     @classmethod
-    def get(cls, key):
+    def cget(cls, key, **kwargs):
         return cls._cached.get(key)
 
     @classmethod
-    def set(cls, key, value):
+    def cset(cls, key, value, **kwargs):
         cls._cached[key] = value
 
     @classmethod
-    def delete(cls, key):
+    def cdelete(cls, key):
         if key in cls._cached:
             del cls._cached[key]
 
@@ -136,27 +141,27 @@ class CodeLoader(object):
             )
             return None
 
-    def save(self, mod, cached=False, *args, **kwargs):
+    def save(self, mod, cached=False, **kwargs):
         """
         Save mod's script to storage backend, is cached=True, cache_backend will be refreshed.
         """
-        self._storage_backend.set(mod.__save_key__, mod.__script__, *args, **kwargs)
+        self._storage_backend.sset(mod.__save_key__, mod.__script__, **kwargs)
         if cached:
-            self._cache_backend.set(mod.__save_key__, pickle.dumps(mod))
+            self._cache_backend.cset(mod.__save_key__, pickle.dumps(mod), **kwargs)
         else:
             self._cache_backend.delete(mod.__save_key__)
 
-    def load(self, fullname, save_key=None, *args, **kwargs):
+    def load(self, fullname, save_key=None, **kwargs):
         if save_key:
             access_key = save_key
         else:
             access_key = self._module_prefix + fullname
-        result = self._cache_backend.get(access_key)
+        result = self._cache_backend.cget(access_key)
         print result
         if result:
             return pickle.loads(result)
         else:
-            result = self._storage_backend.get(access_key, *args, **kwargs)
+            result = self._storage_backend.sget(access_key, **kwargs)
             return self.create_module(fullname, result, access_key)
 
     def _compile(self, fullname, code_script):
