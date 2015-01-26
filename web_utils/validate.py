@@ -1,0 +1,177 @@
+# !/usr/bin/env python
+# coding: utf-8
+import json
+import time
+import datetime
+from wtforms import IntegerField, StringField
+from wtforms.validators import ValidationError
+
+__author__ = 'winkidney'
+
+__doc__ = """
+Validators and Field collection for wtfroms.
+`GET` and `POST` parameters filter.
+"""
+
+__all__ = (
+    'safe_int_arg',
+    'uuid_validator',
+    'TimeAfterNow',
+    'MobilePhone',
+    'TextArrayField',
+    'UnixTimeField',
+    'JsonField',
+    'IntArrayField',
+)
+
+
+def _safe_get_int_arg(input_value, default=None, nmin=None, nmax=None):
+    """
+    Use dict.get to access int value with max limit.
+    If min and max not given, min=0 and the function will return
+    validate it by min.
+    :param input_value: GET or POST dict.
+    :param default: default returned value
+    :param nmin: range limit of argument
+    :param nmax: range limit of argument
+    :return: if input_value is not valid, return will be `default`, not nmin or nmax.
+    :rtype int
+    """
+    try:
+        value = int(input_value)
+        if nmax is not None and nmin is not None:
+            if nmin <= value <= nmax:
+                return value
+        elif nmin is not None:
+            if value >= nmin:
+                return value
+        elif nmax is not None:
+            if value <= nmax:
+                return value
+        else:
+            return value
+    except (ValueError, TypeError):
+        pass
+    return default
+
+safe_int_arg = _safe_get_int_arg
+
+
+def uuid_validator(field):
+    if isinstance(field, (str, unicode)) and \
+            map(lambda s: len(s), field.split('-')) == [8, 4, 4, 4, 12]:
+        return True
+    else:
+        return False
+
+
+def utmp2datetime(unix_timestamp):
+    """
+    :type unix_timestamp: int or str
+    :return: datetime.datetime
+    """
+    return datetime.datetime.fromtimestamp(unix_timestamp)
+
+
+def datetime2utmp(datetime_instance):
+    """
+    :type datetime_instance: datetime.datetime
+    :return: int
+    """
+    return int(time.mktime(datetime_instance.timetuple()))
+
+
+### wtf custom validators ###
+def TimeAfterNow(form, field):
+    if field.data:
+        if field.data < datetime.datetime.utcnow():
+            raise ValidationError('This time field must later than now.')
+
+
+def MobilePhone(form, field):
+    #todo : more method to validate.
+    if field.data.isdigit() and len(field.data) == 11:
+        return
+    raise ValidationError('Not valid mobile phone number')
+
+
+class UnixTimeField(IntegerField):
+    """
+    UnixTimeField, except stores a `datetime.date`.
+    """
+    def _value(self):
+        if self.raw_data:
+            return int(time.mktime(self.raw_data.timetuple()))
+        elif self.data is not None:
+            return int(time.mktime(self.data.timetuple()))
+        else:
+            return None
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = utmp2datetime(int(valuelist[0]))
+            except ValueError:
+                self.data = None
+                raise ValueError(self.gettext('Not a valid unix timestamp'))
+
+
+class TextArrayField(StringField):
+    """
+    Except stores a `list` contains text, splited by `,`.
+    """
+    def _value(self):
+        if self.raw_data:
+            return ','.join(unicode(i) for i in self.raw_data[0])
+        elif self.data is not None:
+            return ','.join(unicode(i) for i in self.data)
+        else:
+            return ''
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            self.data = [i.strip() for i in valuelist[0].split(',') if i]
+        else:
+            self.data = []
+
+
+class JsonField(StringField):
+    """
+    Except stores a `list` contains text, splited by `,`.
+    """
+    def _value(self):
+        if self.raw_data:
+            return json.dumps(self.raw_data[0])
+        elif self.data is not None:
+            return json.dumps(self.data)
+        else:
+            return ''
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = json.loads(valuelist[0])
+            except ValueError:
+                self.data = {}
+                raise ValueError(self.gettext('Not a valid Json Strings'))
+
+
+class IntArrayField(IntegerField):
+    """
+    Except stores a `list` contains integers, splited by `,`.
+    """
+    def _value(self):
+        if self.raw_data:
+            return ','.join(unicode(i) for i in self.raw_data[0])
+        elif self.data is not None:
+            return ','.join(unicode(i) for i in self.data)
+        else:
+            return ''
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            try:
+                self.data = [int(i.strip()) for i in valuelist[0].split(',') if i]
+            except ValueError:
+                self.data = []
+                raise ValueError(self.gettext('Not a valid IntArray field, requires format like `1,2,3`.'))
