@@ -106,6 +106,8 @@ class CodeLoader(object):
 
     def create_module(self, fullname, code_script, save_key=None):
         """
+        Create a module from object as a normal python module.
+        if `save_key` is given, use it instead of fullname as `accees_key` passed to storage backend's `set` method.
         :param fullname: module name, will be joined with prefix `dynamic_loaded.`
         :param code_script: the utf-8 encoded bytes object(in python2, it is `str`)
         :param save_key: save key that will be used by storage_backend, You can also run 'CodeLoader.load(save_key)' to
@@ -144,7 +146,8 @@ class CodeLoader(object):
 
     def save(self, mod, cached=False, **kwargs):
         """
-        Save mod's script to storage backend, is cached=True, cache_backend will be refreshed.
+        Save mod's script to storage backend, is cached=True, cache_backend will be used or refreshed.
+        **kwargs will be passed to backend's `set` method.
         """
         self._storage_backend.sset(mod.__save_key__, mod.__script__, **kwargs)
         if cached:
@@ -154,7 +157,8 @@ class CodeLoader(object):
 
     def load(self, fullname, save_key=None, **kwargs):
         """
-        Return given key or get
+        Load a module from storage backend or cache backend.
+        **kwargs will be passed to backend's `set` method.
         :param fullname:
         :param save_key:
         :param kwargs:
