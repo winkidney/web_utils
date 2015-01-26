@@ -73,6 +73,7 @@ class DummyCacheBackend(CacheBackendMixin):
     Just a example, do not apply it to productive application.
     """
     _cached = {}
+
     @classmethod
     def cget(cls, key, **kwargs):
         return cls._cached.get(key)
