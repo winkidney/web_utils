@@ -1,6 +1,6 @@
 # coding: utf-8
 import unittest
-from qadmin.utils.code_loader import CodeLoader
+from . import CodeLoader
 
 normal_code = """
 import os
@@ -52,3 +52,8 @@ class TestCodeLoader(unittest.TestCase):
     def test_runtime_error(self):
         loader = CodeLoader('test_loader')
         self.assertIsNone(loader.create_module('test_module', self.runtime_error_code))
+
+    def test_un_existed_load(self):
+        loader = CodeLoader('test_loader')
+        mod = loader.load('fuck_all_module', self.normal_code)
+        self.assertIsNone(mod)

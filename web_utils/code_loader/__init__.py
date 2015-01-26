@@ -149,20 +149,28 @@ class CodeLoader(object):
         if cached:
             self._cache_backend.cset(mod.__save_key__, pickle.dumps(mod), **kwargs)
         else:
-            self._cache_backend.delete(mod.__save_key__)
+            self._cache_backend.cdelete(mod.__save_key__)
 
     def load(self, fullname, save_key=None, **kwargs):
+        """
+        Return given key or get
+        :param fullname:
+        :param save_key:
+        :param kwargs:
+        :return: loaded mod or None.
+        """
         if save_key:
             access_key = save_key
         else:
             access_key = self._module_prefix + fullname
         result = self._cache_backend.cget(access_key)
-        print result
         if result:
             return pickle.loads(result)
         else:
             result = self._storage_backend.sget(access_key, **kwargs)
-            return self.create_module(fullname, result, access_key)
+            if result:
+                return self.create_module(fullname, result, access_key)
+            return None
 
     def _compile(self, fullname, code_script):
         """
