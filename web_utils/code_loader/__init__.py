@@ -90,7 +90,6 @@ class CodeLoader(object):
     """
     Get a module object from script file or string.
     """
-    _module_prefix = "_dynamic_loaded_"
 
     def __init__(self, name, storage_backend=DummyStorageBackend, cache_backend=DummyCacheBackend):
         if not issubclass(storage_backend, StorageBackendMixin):
@@ -122,12 +121,12 @@ class CodeLoader(object):
             return None
 
         mod = imp.new_module(fullname)
-        mod.__file__ = self._module_prefix + fullname
+        mod.__file__ = fullname
         mod.__loader__ = self
         mod.__package__ = ''
         mod.__script__ = code_script
         if save_key is None:
-            mod.__save_key__ = self._module_prefix + fullname
+            mod.__save_key__ = fullname
         else:
             mod.__save_key__ = save_key
 
@@ -165,7 +164,7 @@ class CodeLoader(object):
         if save_key:
             access_key = save_key
         else:
-            access_key = self._module_prefix + fullname
+            access_key = fullname
         result = self._cache_backend.cget(access_key)
         if result:
             return pickle.loads(result)
@@ -181,11 +180,10 @@ class CodeLoader(object):
         :type code_script: str
         """
         try:
-            return compile(code_script, self._module_prefix + fullname, 'exec')
+            return compile(code_script, fullname, 'exec')
         except SyntaxError:
             exc_type, exc_value, tb = sys.exc_info()
             traceback.print_exception(exc_type, exc_value, tb)
             logger.warning("code script `%s` has SyntaxError:\n"
                            "The code:\n%s" % (fullname, code_script))
             return None
-
