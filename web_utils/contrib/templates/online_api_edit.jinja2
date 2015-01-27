@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/codemirror.min.css"/>
+</head>
+<body>
+
+<h2>{% if method == "POST" %}新建一个API{% else %}修改这个API{% endif %}</h2>
+<form action="" id="code_form" method="{{ method }}">
+  {% for field in form %}
+    {{ field.label }}: {{ field }}<br>
+  {% endfor %}
+  <button id="submit-buttion" type="submit" >提交表单</button>
+</form>
+
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/codemirror.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/mode/python/python.js"></script>
+<script>
+  var body = document.getElementById('body');
+  var editor = CodeMirror.fromTextArea(body, {
+    lineNumbers: true,
+    mode:  "python",
+    smartIndent: true,
+    tabSize: 4,
+    indentUnit: 4
+  });
+</script>
+<script>
+  document.getElementById("code_form").onsubmit = function(e) {
+
+    var button = document.getElementById("submit-buttion");
+    button.disabled = true;
+    e.preventDefault();
+
+    var f = e.target,
+        formData = new FormData(f),
+        xhr = new XMLHttpRequest();
+
+    xhr.open("{{ method }}", f.action);
+    xhr.onload = function(){
+      button.disabled = false;
+      alert(xhr.responseText);
+    };
+    xhr.send(formData);
+}
+
+</script>
+</body>
+</html>
