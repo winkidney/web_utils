@@ -116,7 +116,7 @@ class CodeLoader(object):
         :type code_script: str
         :return: module object if success, return None if fail with anything wrong with the code's runtime error.
         """
-        if not isinstance(code_script, str):
+        if not isinstance(code_script, (str, unicode)):
             raise TypeError("code_script param must instance of str")
 
         code = self._compile(fullname, code_script)
