@@ -85,6 +85,7 @@ class DummyCacheBackend(CacheBackendMixin):
         if key in cls._cached:
             del cls._cached[key]
 
+
 class CodeLoader(object):
     """
     Get a module object from script file or string.
@@ -104,6 +105,14 @@ class CodeLoader(object):
         self._storage_backend = storage_backend
         self._cache_backend = cache_backend
 
+    @classmethod
+    def normalize(cls, code_script):
+        if isinstance(code_script, unicode):
+            code_script = code_script.encode('utf-8')
+        if not isinstance(code_script, str):
+            raise TypeError("code_script param must instance of str")
+        return code_script
+
     def create_module(self, fullname, code_script, save_key=None):
         """
         Create a module from object as a normal python module.
@@ -116,10 +125,10 @@ class CodeLoader(object):
         :type code_script: str
         :return: module object if success, return None if fail with anything wrong with the code's runtime error.
         """
-        if not isinstance(code_script, (str, unicode)):
-            raise TypeError("code_script param must instance of str")
+        code_script = self.normalize(code_script)
 
         code = self._compile(fullname, code_script)
+
         if code is None:
             return None
 
@@ -185,10 +194,13 @@ class CodeLoader(object):
         :param code_script:
         :return:
         """
+        code_script = cls.normalize(code_script)
         try:
             compile(code_script, 'tmp_code', 'exec')
             return None
         except SyntaxError:
+            exc_type, exc_value, tb = sys.exc_info()
+            traceback.print_exception(exc_type, exc_value, tb)
             return ("code script `%s` has SyntaxError:\n"
                     "The code:\n%s" % ('tmp_code', code_script))
 
