@@ -91,11 +91,15 @@ class CodeLoader(object):
     Get a module object from script file or string.
     """
 
-    def __init__(self, name, storage_backend=DummyStorageBackend, cache_backend=DummyCacheBackend):
+    def __init__(self, name, storage_backend=DummyStorageBackend, cache_backend=DummyCacheBackend, context=None):
         if not issubclass(storage_backend, StorageBackendMixin):
             raise TypeError("storage_backend must be subclass of StorageBackendMixin")
         if not issubclass(cache_backend, CacheBackendMixin):
             raise TypeError("cache_backend must be subclass of CacheBackendMixin")
+        if isinstance(context, dict):
+            self.context = context
+        else:
+            self.context = {}
         self.name = name
         self._cache_prefix = 'Loader_{cache_backend_name}_'.format(cache_backend_name=cache_backend.__name__)
         self._storage_backend = storage_backend
@@ -121,6 +125,7 @@ class CodeLoader(object):
             return None
 
         mod = imp.new_module(fullname)
+        mod.__dict__.update(self.context)
         mod.__file__ = fullname
         mod.__loader__ = self
         mod.__package__ = ''
