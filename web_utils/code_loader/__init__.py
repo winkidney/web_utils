@@ -85,7 +85,6 @@ class DummyCacheBackend(CacheBackendMixin):
         if key in cls._cached:
             del cls._cached[key]
 
-
 class CodeLoader(object):
     """
     Get a module object from script file or string.
@@ -178,6 +177,20 @@ class CodeLoader(object):
             if result:
                 return self.create_module(fullname, result, access_key)
             return None
+
+    @classmethod
+    def syntax_check(cls, code_script):
+        """
+        Return None if success, ErrorInfo if fail.
+        :param code_script:
+        :return:
+        """
+        try:
+            compile(code_script, 'tmp_code', 'exec')
+            return None
+        except SyntaxError:
+            return ("code script `%s` has SyntaxError:\n"
+                    "The code:\n%s" % ('tmp_code', code_script))
 
     def _compile(self, fullname, code_script):
         """

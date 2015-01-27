@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <title>Document</title>
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/codemirror.min.css"/>
+  <style>
+    #result-render {
+      border-width: 1px;
+    }
+  </style>
 </head>
 <body>
 
@@ -12,9 +17,18 @@
   {% for field in form %}
     {{ field.label }}: {{ field }}<br>
   {% endfor %}
-  <button id="submit-buttion" type="submit" >提交表单</button>
+  <button id="submit-button" type="submit" >提交表单</button>
 </form>
-
+-------------------------------------------------------------------------------------------------
+<div>
+  <form>
+    <label>请求地址：</label><input id="request-url" placeholder="填写地址" type="text" value="{{ request.path }}"/>
+    <button id="run-get">发起GET请求</button>
+  </form>
+  <label>代码结果结果输出：</label><br>
+  <iframe src="" id="result-render" width="100%">
+  </iframe>
+</div>
 
 <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/codemirror.min.js"></script>
 <script src="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/mode/python/python.js"></script>
@@ -29,24 +43,33 @@
   });
 </script>
 <script>
-  document.getElementById("code_form").onsubmit = function(e) {
+  function submit_form(form, on_load_func) {
+    var formData = new FormData(form);
+    var xhr = new XMLHttpRequest();
 
-    var button = document.getElementById("submit-buttion");
-    button.disabled = true;
-    e.preventDefault();
-
-    var f = e.target,
-        formData = new FormData(f),
-        xhr = new XMLHttpRequest();
-
-    xhr.open("{{ method }}", f.action);
-    xhr.onload = function(){
-      button.disabled = false;
-      alert(xhr.responseText);
+    xhr.open("{{ method }}", form.action);
+    xhr.onload = function (){
+      on_load_func(xhr);
     };
     xhr.send(formData);
-}
+  }
 
+  document.getElementById("code_form").onsubmit = function (e) {
+    var button = document.getElementById("submit-button");
+    button.disabled = true;
+    e.preventDefault();
+    submit_form(
+      e.target,
+      function (xhr) {
+        button.disabled = false;
+        alert(xhr.responseText);
+    });
+  };
+
+  document.getElementById("run-get").onclick = function (e){
+    e.preventDefault();
+    document.getElementById("result-render").src = document.getElementById('request-url').value;
+  };
 </script>
 </body>
 </html>
