@@ -20,7 +20,6 @@ __all__ = (
 
 
 class StorageBackendMixin(object):
-        __metaclass__ = ABCMeta
 
         @classmethod
         @abstractmethod
@@ -50,7 +49,6 @@ class DummyStorageBackend(StorageBackendMixin):
 
 
 class CacheBackendMixin(object):
-    __metaclass__ = ABCMeta
 
     @classmethod
     @abstractmethod
