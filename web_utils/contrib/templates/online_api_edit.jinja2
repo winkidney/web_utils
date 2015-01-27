@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Document</title>
+  <title>API新建或修改</title>
   <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/codemirror/4.12.0/codemirror.min.css"/>
   <style>
     #result-render {
@@ -17,7 +17,8 @@
   {% for field in form %}
     {{ field.label }}: {{ field }}<br>
   {% endfor %}
-  <button id="submit-button" type="submit" >提交表单</button>
+    <button id="submit-button" type="submit" >提交表单</button>
+  {% if method == "PUT" %} <button id="delete-button">删除这个API</button>{% endif %}
 </form>
 -------------------------------------------------------------------------------------------------
 <div>
@@ -70,6 +71,22 @@
     e.preventDefault();
     document.getElementById("result-render").src = document.getElementById('request-url').value;
   };
+
+  document.getElementById("delete-button").onclick = function (e) {
+    var button = document.getElementById("delete-button");
+    button.disabled = true;
+    e.preventDefault();
+    var xhr = new XMLHttpRequest();
+    xhr.open("DELETE", '');
+    xhr.onload = function (){
+      alert(xhr.responseText);
+      button.disabled = false;
+    };
+    xhr.send();
+
+  };
+
+
 </script>
 </body>
 </html>
