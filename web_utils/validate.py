@@ -3,6 +3,10 @@
 import json
 import time
 import datetime
+try:
+    from webob.multidict import MultiDict
+except ImportError:
+    MultiDict = dict
 from wtforms import IntegerField, StringField
 from wtforms.validators import ValidationError
 
@@ -203,3 +207,16 @@ class PyIntListField(IntArrayField):
                 return
             self.data = []
             raise ValueError('Not a valid IntArray field, requires format like `[1,2,3]`.')
+
+
+def json2form(json_dict):
+    """
+    Warning:if webob.multidict.MultiDict does not exist, the dict object will be used.
+    WTForms can not recognize dict but MultiDict works well.
+    """
+    form_dict = MultiDict()
+    for item in json_dict.items():
+        if item[1] is None:
+            form_dict[item[0]] = ''
+        else:
+            form_dict[item[0]] = item[1]
