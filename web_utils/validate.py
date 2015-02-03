@@ -220,3 +220,5 @@ def json2form(json_dict):
             form_dict[item[0]] = ''
         else:
             form_dict[item[0]] = item[1]
+
+    return form_dict
