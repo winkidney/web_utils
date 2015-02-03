@@ -150,7 +150,10 @@ class JsonField(StringField):
     def process_formdata(self, valuelist):
         if valuelist:
             try:
-                self.data = json.loads(valuelist[0])
+                if valuelist[0] is not None:
+                    self.data = json.loads(valuelist[0])
+                else:
+                    self.data = {}
             except ValueError:
                 self.data = {}
                 raise ValueError(self.gettext('Not a valid Json Strings'))
@@ -175,3 +178,28 @@ class IntArrayField(IntegerField):
             except ValueError:
                 self.data = []
                 raise ValueError(self.gettext('Not a valid IntArray field, requires format like `1,2,3`.'))
+
+
+class PyIntListField(IntArrayField):
+    """
+    Warning: Just for MultiDict from a json_body from request.
+    Except stores a python style `list` contains integers, split by `,` and wrapped by `[]`.
+    """
+    def _value(self):
+        if self.raw_data:
+            return ','.join(unicode(i) for i in self.raw_data[0])
+        elif self.data is not None:
+            return ','.join(unicode(i) for i in self.data)
+        else:
+            return ''
+
+    def process_formdata(self, valuelist):
+        if valuelist:
+            if isinstance(valuelist[0], (list, tuple)):
+                self.data = valuelist[0]
+                for i in self.data:
+                    if not isinstance(i, int):
+                        raise ValueError(self.gettext('Not a valid IntArray field, requires format like `[1,2,3]`.'))
+                return
+            self.data = []
+            raise ValueError('Not a valid IntArray field, requires format like `[1,2,3]`.')
