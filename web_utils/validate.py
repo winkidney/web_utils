@@ -29,38 +29,6 @@ __all__ = (
 )
 
 
-def _safe_get_int_arg(input_value, default=None, nmin=None, nmax=None):
-    """
-    Use dict.get to access int value with max limit.
-    If min and max not given, min=0 and the function will return
-    validate it by min.
-    :param input_value: GET or POST dict.
-    :param default: default returned value
-    :param nmin: range limit of argument
-    :param nmax: range limit of argument
-    :return: if input_value is not valid, return will be `default`, not nmin or nmax.
-    :rtype int
-    """
-    try:
-        value = int(input_value)
-        if nmax is not None and nmin is not None:
-            if nmin <= value <= nmax:
-                return value
-        elif nmin is not None:
-            if value >= nmin:
-                return value
-        elif nmax is not None:
-            if value <= nmax:
-                return value
-        else:
-            return value
-    except (ValueError, TypeError):
-        pass
-    return default
-
-safe_int_arg = _safe_get_int_arg
-
-
 def uuid_validator(field):
     if isinstance(field, (str, unicode)) and \
             map(lambda s: len(s), field.split('-')) == [8, 4, 4, 4, 12]:
@@ -93,7 +61,6 @@ def TimeAfterNow(form, field):
 
 
 def MobilePhone(form, field):
-    #todo : more method to validate.
     if field.data.isdigit() and len(field.data) == 11:
         return
     raise ValidationError('Not valid mobile phone number')
