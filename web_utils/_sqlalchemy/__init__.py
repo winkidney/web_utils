@@ -62,6 +62,9 @@ class DBFCMixin(object):
     def as_dict(self, pure=False):
         return self.to_dict(self, pure)
 
+    @classmethod
+    def conv2dict(cls, model_instances):
+        return [cls.to_dict(model_instance) for model_instance in model_instances]
 
 
 class DBFieldConverter(object):
