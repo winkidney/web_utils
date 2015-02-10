@@ -151,7 +151,7 @@ class IntArrayField(IntegerField):
                 raise ValueError(self.gettext('Not a valid IntArray field, requires format like `1,2,3`.'))
 
 
-class PyIntListField(IntArrayField):
+class PyIntArrayField(StringField):
     """
     Warning: Just for MultiDict from a json_body from request.
     Except stores a python style `list` contains integers, split by `,` and wrapped by `[]`.
