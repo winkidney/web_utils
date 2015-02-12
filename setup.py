@@ -10,7 +10,6 @@ with open(os.path.join(here, 'CHANGES.txt')) as f:
 
 requires = [
     'bcrypt',
-    'pysandbox',
 ]
 complex_requires = [
     'sqlalchemy',
@@ -18,6 +17,7 @@ complex_requires = [
     'psycopg2',
     'pycrypto',
     'padding',
+    'jsonschema',
 ]
 test_requires = [
     'nose',

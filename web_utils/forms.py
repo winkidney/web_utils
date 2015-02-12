@@ -3,6 +3,8 @@
 import json
 import time
 import datetime
+import jsonschema
+
 try:
     from webob.multidict import MultiDict
 except ImportError:
