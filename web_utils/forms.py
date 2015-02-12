@@ -178,7 +178,8 @@ class PyIntArrayField(StringField):
 
 def json2form(json_dict):
     """
-    Warning:if webob.multidict.MultiDict does not exist, the dict object will be used.
+    :type json_dict: dict or webob.multidict.MultiDict
+    Warning: if webob.multidict.MultiDict does not exist, the dict object will be used.
     WTForms can not recognize dict but MultiDict works well.
     """
     form_dict = MultiDict()
