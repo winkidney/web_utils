@@ -91,8 +91,27 @@ class TestValidate(unittest.TestCase):
         self.assertEqual(safe_int_arg('20', default, nmax=12), 10)
 
 
-
-
-
+class TestJsonForm(unittest.TestCase):
+    class NewPMSSchema(JsonForm):
+        schema = {
+            "type": "object",
+            "properties": {
+                "to_uid": {
+                    "type": "number",
+                },
+                "content": {
+                    "type": "string",
+                },
+                "test": {
+                    "type": "object",
+                    "properties": {
+                        "test1": {
+                            "type": "integer",
+                        }
+                    }
+                },
+            },
+            "required": ['to_uid', 'content'],
+        }
 
 
