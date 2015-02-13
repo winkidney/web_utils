@@ -2,19 +2,26 @@ Web Utils
 ------------
 
 Web development utils classes and functions.
-Summaries are listed below.
+Current status: Under development and works in my project.
+Find me in http://github.com/winkidney/web_utils.
 
-+ code_loader
-+ Validation
-+ Security
-+ __init__
-+ pyramid
-+ sqlalchemy
+Summaries are listed below.Documents will be written later.
+
+##Summaries
+
++ code_loader - load code from str or unicode object and save it to cache or database
++ forms - some custom validator for wtfomrs
++ json_form - wrapper for jsonschema to validate json string like wtfomrs.
++ Security - password generator by bcrypt.Simple url sign generator.
++ __init__ - some other utils.
++ _pyramid - tools form pyramid web framework
++ _sqlalchemy - DBFieldConverter for convert alchemy's model instance to dict like string with white list support.
 
 
 
 ##web_utils.code_loader
-Create a Codeloader instance to load and save code from Storage or str object.
+
+Create a Code loader instance to load and save code from Storage or str object.
 Return a python module object that you can run any code within it.
 
 + Methods
