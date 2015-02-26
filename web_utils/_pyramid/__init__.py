@@ -1,5 +1,6 @@
 # coding: utf-8
 from pyramid import threadlocal
+from ..extra import GSA
 
 
 def get_route_from_request(request):
@@ -40,7 +41,7 @@ class ListBaseHandler(BaseHandler):
         :type request: pyramid.request.Request
         """
         super(ListBaseHandler, self).__init__(request)
-        self.page = _safe_get_int_arg(self.request.GET.get('page'), 1)
-        self.limit = _safe_get_int_arg(self.request.GET.get("limit"), 30, nmin=1, nmax=50)
+        self.page = GSA.integer(self.request.GET.get('page'), 1)
+        self.limit = GSA.integer(self.request.GET.get("limit"), 30, nmin=1, nmax=50)
         self.start = (self.page-1)*self.limit
         self.end = self.page*self.limit

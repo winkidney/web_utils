@@ -12,6 +12,7 @@ __all__ = (
         'ISignaturePolicy',
 )
 
+
 class AuthBcrypt(object):
 
     """Generate Bcrypt password and check if the input
