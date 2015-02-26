@@ -1,11 +1,11 @@
 Web Utils
 ------------
 
-Web development utils classes and functions.
-Current status: Under development and works in my project.
-Find me in http://github.com/winkidney/web_utils.
+Web development utils classes and functions.    
+Current status: Under development and works in my project.    
+Find me in http://github.com/winkidney/web_utils.    
 
-Summaries are listed below.Documents will be written later.
+Summaries are listed below.Documents will be written later.    
 
 ##Install
 ```
@@ -25,8 +25,8 @@ pip install "web_utils[forms,security,sqlalchemy]" # to install all requirements
 
 ##web_utils.code_loader
 
-Create a Code loader instance to load and save code from Storage or str object.
-Return a python module object that you can run any code within it.
+Create a Code loader instance to load and save code from Storage or str object.    
+Return a python module object that you can run any code within it.    
 
 + Methods
   + __init__(name, storage_backend=DummyStorageBackend, cache_backend=DummyCacheBackend)
@@ -40,7 +40,7 @@ Return a python module object that you can run any code within it.
     Load a module by its name(if `save_key` is given, use it instead).
 
 ##web_utils.forms
-WTFroms's custom field and other validator
+WTFroms's custom field and other validator    
 
 + validators
   + uuid_validator
@@ -92,15 +92,15 @@ if not result:
 ```
 
 ##web_utils.security
-Not recommend to use it.
+Not recommend to use it.    
 
 ##web_utils._sqlalchemy
-A sqlalchemy model to json data converter with white list and custom converter support.
+A sqlalchemy model to json data converter with white list and custom converter support.    
 
 ###DBFCMixin
-Just inherit it in your sqlalchemy model and call `as_dict` method to output python dict.
-`class._default_output` is required.
-Example listed below:
+Just inherit it in your sqlalchemy model and call `as_dict` method to output python dict.    
+`class._default_output` is required.    
+Example listed below:    
 
 ```python
 class APIStorage(Base, DBFCMixin, StorageBackendMixin):
@@ -122,7 +122,7 @@ model_instance.as_dict(pure=False)  #False is default , with white list support.
 ```
 
 ###DBFieldConverter
-Low level API for DBFCMixin
+Low level API for DBFCMixin    
 Quick example:
 
 ```python
