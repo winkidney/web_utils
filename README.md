@@ -189,21 +189,21 @@ form2model(form, model_instance, exclude=None)
 
 ##web_utils.extra
 Some utils about argument parse ,datetime format.
-+ GetSingleArgument
++ GetSingleArgument    
   + bool(cls, value, default=False) default value support, will not return None.
   + integer(cls, value, default, nmin=None, nmax=None) - parse integer from string, return default value if not in given range.
   + string(cls, value, default='') - default value support
-+ format_timestamp
++ format_timestamp    
   from tornado core, to format timestamp
   ```python
   >>> format_timestamp(1359312200)
     'Sun, 27 Jan 2013 18:43:20 GMT'
   ```
-+ AttrDict
-  Simple wrapper for `attr dict`
++ AttrDict    
+  Simple wrapper for `attr dict`     
   ```
   d = AttrDict({'a': 1})
   d.a # output 1
-  ```
+  ```    
   Many problem when use it, pay attention before you really know what you are doing.
 
