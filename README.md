@@ -60,30 +60,29 @@ Just inherit `JsonForm` class and call `validate` method to do validation.
 Validation by `JsonSchema` , [Validation Quick Start](http://json-schema.org/latest/json-schema-validation.html).
 Example listed below:
 ```python
-class TestJsonForm(unittest.TestCase):
-    class NewPMSSchema(JsonForm):
-        schema = {
-            "type": "object",
-            "properties": {
-                "to_uid": {
-                    "type": "number",
-                },
-                "content": {
-                    "type": "string",
-                },
-                "test": {
-                    "type": "object",
-                    "properties": {
-                        "test1": {
-                            "type": "integer",
-                        }
-                    }
-                },
+class NewPMSSchema(JsonForm):
+    schema = {
+        "type": "object",
+        "properties": {
+            "to_uid": {
+                "type": "number",
             },
-            "required": ['to_uid', 'content'],
-        }
+            "content": {
+                "type": "string",
+            },
+            "test": {
+                "type": "object",
+                "properties": {
+                    "test1": {
+                        "type": "integer",
+                    }
+                }
+            },
+        },
+        "required": ['to_uid', 'content'],
+    }
 
-form = TestJsonForm({'to_uid': 'a', 'content': 1})
+form = NewPMSSchema({'to_uid': 'a', 'content': 1})
 # result
 result = form.validate()
 # errors
