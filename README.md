@@ -175,8 +175,8 @@ For example:
 from sqlalchemy import Text
 converter = DBFC(model_instance, model_instance._default_output, registry={Text: lambda x: x[-1]})
 ```
-**Note:**  This registry will not overwrite other converter of DBFC's instance since it's `instance registry`.
-Otherwise, `DBFC.registry` register class converter in it's registry.
+**Note:**  This registry will not affect other instance's registry of DBFieldConverter since it's `instance registry`.     
+Otherwise, `DBFC.register` register class converter in it's registry, every instance will be affected.
 
 ###form2model
 Easy set `wtfomrs` `Form` data to sqlalchemy's model field, name by name.
@@ -193,7 +193,7 @@ Some utils about argument parse ,datetime format.
   + integer(cls, value, default, nmin=None, nmax=None) - parse integer from string, return default value if not in given range.
   + string(cls, value, default='') - default value support
 + format_timestamp    
-  from tornado core, to format timestamp
+  from tornado core, to format timestamp    
   ```python
   >>> format_timestamp(1359312200)
     'Sun, 27 Jan 2013 18:43:20 GMT'
