@@ -21,6 +21,9 @@ class AttrDict(dict):
     def __getattr__(self, item):
         return self[item]
 
+    def __setattr__(self, name, value):
+        self[name] = value
+
 
 def format_timestamp(ts):
     """Formats a timestamp in the format used by HTTP.
