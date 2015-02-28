@@ -6,8 +6,9 @@ import datetime
 from sqlalchemy import (Column, Text, Integer, DateTime)
 from sqlalchemy.dialects.postgresql import (ARRAY, JSON)
 from sqlalchemy.ext.declarative import declarative_base
-from .validate import datetime2utmp, safe_int_arg
-from ._sqlalchemy import DBFC
+from ._sqlalchemy import DBFC, datetime2utmp
+from .extra import GSA
+from .json_form import JsonForm
 
 __author__ = 'winkidney'
 
@@ -77,18 +78,18 @@ class TestDBFC(unittest.TestCase):
 
 class TestValidate(unittest.TestCase):
 
-    def testsafe_int_arg(self):
+    def testGSA_integer(self):
         default = 10
-        self.assertEqual(safe_int_arg('5', default), 5)
-        self.assertEqual(safe_int_arg(None, default), 10)
-        self.assertEqual(safe_int_arg("fuck", default), 10)
+        self.assertEqual(GSA.integer('5', default), 5)
+        self.assertEqual(GSA.integer(None, default), 10)
+        self.assertEqual(GSA.integer("fuck", default), 10)
 
-        self.assertEqual(safe_int_arg('5', default, nmin=1, nmax=12), 5)
-        self.assertEqual(safe_int_arg('13', default, nmin=1, nmax=12), 10)
-        self.assertEqual(safe_int_arg('-1', default, nmin=1, nmax=12), 10)
-        self.assertEqual(safe_int_arg('1', default, nmin=1, nmax=12), 1)
-        self.assertEqual(safe_int_arg('-1', default, nmin=1), 10)
-        self.assertEqual(safe_int_arg('20', default, nmax=12), 10)
+        self.assertEqual(GSA.integer('5', default, nmin=1, nmax=12), 5)
+        self.assertEqual(GSA.integer('13', default, nmin=1, nmax=12), 10)
+        self.assertEqual(GSA.integer('-1', default, nmin=1, nmax=12), 10)
+        self.assertEqual(GSA.integer('1', default, nmin=1, nmax=12), 1)
+        self.assertEqual(GSA.integer('-1', default, nmin=1), 10)
+        self.assertEqual(GSA.integer('20', default, nmax=12), 10)
 
 
 class TestJsonForm(unittest.TestCase):

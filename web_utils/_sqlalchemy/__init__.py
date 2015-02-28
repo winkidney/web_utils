@@ -9,7 +9,7 @@ __all__ = (
     'datetime2utmp',
     'form2model',
     'DBFC',
-    'AlchemyJsonMixin'
+    'DBFCMixin'
 )
 
 
