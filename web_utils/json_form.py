@@ -33,5 +33,10 @@ class JsonForm(object):
                 if properties[key]['type'].lower() == 'object':
                     output[key] = {}
                     self._filter_data(data[key], properties[key]['properties'], output[key])
+                elif properties[key]['type'].lower() == 'number':
+                    try:
+                        output[key] = int(data[key])
+                    except ValueError:
+                        output[key] = data[key]
                 else:
                     output[key] = data[key]
