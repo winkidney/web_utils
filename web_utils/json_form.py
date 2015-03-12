@@ -1,5 +1,6 @@
 # coding: utf-8
 import jsonschema
+from jsonschema.validators import Draft4Validator
 
 
 class JsonForm(object):
@@ -11,14 +12,16 @@ class JsonForm(object):
             raise TypeError('json_data must be a dict.')
         if not self.schema:
             raise NotImplementedError('schema not implemented!')
+        Draft4Validator.check_schema(self.schema)
 
         self.data = {}
         self._filter_data(json_data, self.schema['properties'], self.data)
+        self.validator = Draft4Validator(self.schema)
         self.errors = None
 
     def validate(self):
         try:
-            jsonschema.validate(self.data, self.schema)
+            self.validator.validate(self.data, self.schema)
             return True
         except jsonschema.ValidationError as e:
             self.errors = str(e)
