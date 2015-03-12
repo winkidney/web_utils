@@ -38,5 +38,10 @@ class JsonForm(object):
                         output[key] = int(data[key])
                     except (ValueError, TypeError):
                         output[key] = data[key]
+                elif properties[key]['type'].lower() == 'string':
+                    try:
+                        output[key] = str(data[key])
+                    except UnicodeDecodeError:
+                        output[key] = data[key]
                 else:
                     output[key] = data[key]
