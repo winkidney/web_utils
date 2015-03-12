@@ -36,7 +36,7 @@ class JsonForm(object):
                 elif properties[key]['type'].lower() == 'number':
                     try:
                         output[key] = int(data[key])
-                    except ValueError:
+                    except (ValueError, TypeError):
                         output[key] = data[key]
                 else:
                     output[key] = data[key]
