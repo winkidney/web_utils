@@ -1,1 +1,2 @@
+2015-03-19 fix bug in `JsonForm` and add integer and string auto-converter in `JsonForm`
 2015-02-13 update readme.
