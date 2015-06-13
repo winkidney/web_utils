@@ -40,7 +40,7 @@ class RestMixin(object):
         if view_func is not None:
             return getattr(self, view_func)(request, *args, **kwargs)
         else:
-            self.raise_400()
+            return self.raise_400()
 
     @staticmethod
     def raise_400():
