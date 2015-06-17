@@ -35,10 +35,9 @@ class RestMixin(object):
         :return: HttpResponse
         """
         self.request = request
-        view_func = self._methods.get(request.method, None)
-        print view_func
-        if view_func is not None:
-            return getattr(self, view_func)(request, *args, **kwargs)
+        view_func_name = self._methods.get(request.method, None)
+        if view_func_name is not None:
+            return self.call(getattr(self, view_func_name), *args, **kwargs)
         else:
             return self.raise_400()
 
@@ -57,3 +56,9 @@ class RestMixin(object):
 
     def delete(self, request, *args, **kwargs):
         return self.raise_400()
+
+    def render(self, template_name, context_dict=None, use_context=True, **kwargs):
+        if use_context:
+            return render_to_response(template_name, context_dict, context_instance=RequestContext(self.request), **kwargs)
+        else:
+            return render_to_response(template_name, context_dict, **kwargs)
