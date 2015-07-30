@@ -24,7 +24,7 @@ test_requires = [
 
 setup(
     name='web_utils',
-    version='0.0.4',
+    version='0.0.5',
     description='web_utils collection that used in web development process.',
     long_description=README + '\n\n' + CHANGES,
     classifiers=[
