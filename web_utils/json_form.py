@@ -7,11 +7,17 @@ class JsonForm(object):
 
     schema = {}
 
-    def __init__(self, json_data):
+    def __init__(self, json_data, live_schema=None):
         if not hasattr(json_data, '__getitem__'):
             raise TypeError('json_data must be a dict.')
         if not self.schema:
             raise NotImplementedError('schema not implemented!')
+        if live_schema is not None:
+            self.live_schema = live_schema
+            self.schema['properties'].update(live_schema['properties'])
+            if "required" in self.schema and "required" in live_schema:
+                self.schema['required'] = list(set(self.schema['required']) | set(live_schema["required"]))
+
         Draft4Validator.check_schema(self.schema)
 
         self.data = {}
