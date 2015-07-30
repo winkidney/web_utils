@@ -7,7 +7,7 @@ class JsonForm(object):
 
     schema = {}
 
-    def __init__(self, json_data, live_schema=None):
+    def __init__(self, json_data, strict=False, live_schema=None):
         if not hasattr(json_data, '__getitem__'):
             raise TypeError('json_data must be a dict.')
         if not self.schema:
@@ -21,7 +21,10 @@ class JsonForm(object):
         Draft4Validator.check_schema(self.schema)
 
         self.data = {}
-        self._filter_data(json_data, self.schema['properties'], self.data)
+        if not strict:
+            self._filter_data(json_data, self.schema['properties'], self.data)
+        else:
+            self.data = json_data
         self.validator = Draft4Validator(self.schema)
         self.errors = None
 
