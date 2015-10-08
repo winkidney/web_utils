@@ -8,15 +8,21 @@ class JsonForm(object):
     schema = {}
 
     def __init__(self, json_data, strict=False, live_schema=None):
+        self.live_schema = live_schema
         if not hasattr(json_data, '__getitem__'):
             raise TypeError('json_data must be a dict.')
-        if not self.schema:
+        if (not self.schema) and (live_schema is None):
             raise NotImplementedError('schema not implemented!')
         if live_schema is not None:
-            self.live_schema = live_schema
-            self.schema['properties'].update(live_schema['properties'])
-            if "required" in self.schema and "required" in live_schema:
-                self.schema['required'] = list(set(self.schema['required']) | set(live_schema["required"]))
+            if not self.schema:
+                self.schema = live_schema
+            else:
+                self.schema['properties'].update(live_schema['properties'])
+                if "required" in self.schema and "required" in live_schema:
+                    self.schema['required'] = list(
+                        set(self.schema['required']) |
+                        set(live_schema["required"])
+                    )
 
         Draft4Validator.check_schema(self.schema)
 
@@ -41,7 +47,10 @@ class JsonForm(object):
             if key in properties:
                 if properties[key]['type'].lower() == 'object':
                     output[key] = {}
-                    self._filter_data(data[key], properties[key]['properties'], output[key])
+                    self._filter_data(
+                        data[key], properties[key]['properties'],
+                        output[key]
+                    )
                 elif properties[key]['type'].lower() == 'number':
                     try:
                         output[key] = int(data[key])
